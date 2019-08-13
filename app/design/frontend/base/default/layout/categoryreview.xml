@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+    <!-- Category default layout -->
+
+    <catalog_category_default>
+        <reference name="head">
+            <action method="addJs" ifconfig="precursorconfig/general/enabled"><script>categoryreview/jquery-1.10.2.min.js</script></action>
+            <action method="addJs" ifconfig="precursorconfig/general/enabled"><script>categoryreview/noconflict.js</script></action>
+            <action method="addJs" ifconfig="precursorconfig/general/enabled"><script>categoryreview/jquery.fancybox.js</script></action>
+            <action method="addItem" ifconfig="precursorconfig/general/enabled"><type>js_css</type><name>categoryreview/jquery.fancybox.css</name></action>
+        </reference>
+        <reference name="category.products">
+            <action method="setTemplate" ifconfig="precursorconfig/general/enabled"><template>categoryreview/categoryreview.phtml</template></action>
+        </reference>
+    </catalog_category_default>
+
+    <!-- Category layered navigation layout -->
+    
+    <catalog_category_layered>
+        <reference name="head">
+            <action method="addJs" ifconfig="precursorconfig/general/enabled"><script>categoryreview/jquery-1.10.2.min.js</script></action>
+            <action method="addJs" ifconfig="precursorconfig/general/enabled"><script>categoryreview/noconflict.js</script></action>
+            <action method="addJs" ifconfig="precursorconfig/general/enabled"><script>categoryreview/jquery.fancybox.js</script></action>
+            <action method="addItem" ifconfig="precursorconfig/general/enabled"><type>js_css</type><name>categoryreview/jquery.fancybox.css</name></action>
+        </reference>
+        <reference name="category.products">
+            <action method="setTemplate" ifconfig="precursorconfig/general/enabled"><template>categoryreview/categoryreview.phtml</template></action>
+        </reference>
+    </catalog_category_layered> 
+</layout>

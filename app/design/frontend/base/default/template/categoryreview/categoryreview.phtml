@@ -1,0 +1,208 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2006-2014 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Category view template
+ *
+ * @see Mage_Catalog_Block_Category_View
+ */
+?>
+<?php
+    $_helper    = $this->helper('catalog/output');
+    $_category  = $this->getCurrentCategory();
+    $catId      = $_category->getId(); 
+    $_imgHtml   = '';
+    if ($_imgUrl = $_category->getImageUrl()) {
+        $_imgHtml = '<p class="category-image"><img src="'.$_imgUrl.'" alt="'.$this->escapeHtml($_category->getName()).'" title="'.$this->escapeHtml($_category->getName()).'" /></p>';
+        $_imgHtml = $_helper->categoryAttribute($_category, $_imgHtml, 'image');
+    }
+?>
+<div class="page-title category-title">
+    <?php if($this->IsRssCatalogEnable() && $this->IsTopCategory()): ?>
+        <a href="<?php echo $this->getRssLink() ?>" class="link-rss"><?php echo $this->__('Subscribe to RSS Feed') ?></a>
+    <?php endif; ?>
+    <!---- category reviews popup ---->   
+    <?php $ses=Mage::getSingleton('customer/session'); 
+          $sescustomer=$ses->getCustomer();
+    if(!$sescustomer->hasData("showcategoryreview")):
+        $sescustomer->setData("showcategoryreview","true");
+        $catId = $_category->getId(); ?>
+        
+        <div class="red_text be-first">
+            <?php if(Mage::helper('categoryreview')->ShowAVG()): ?>
+                <!---------- Average Category Review ---------->
+                <?php if($reviews = $this->getAvgCatreview($_category->getId())): ?> 
+                    <div class="gray_text ratings"><label><?php echo $this->__('Over all Rating: '); ?></label>    
+                        <div class="rating-box">
+                            <div class="rating nobr" style="width:<?php echo $reviews*20;?>%;"></div>
+                        </div>                                                             
+                    </div>
+                <?php endif; ?> 
+            <?php endif; ?>
+            <?php if(count($this->getCatreview($catId))): ?>
+                <a id="catreviews" href="#show_reviews" class="review-cnt">(<?=count($this->getCatreview($catId));?>)<?php echo $this->__(' Review (s)') ?></a> | 
+                <a id="catreviews" href="#add_reviews" class="red_link13px"><?php echo $this->__('Add your reviews') ?></a>
+            <?php else: ?>
+                <a id="catreviews" href="#add_reviews" class="red_link13px"><?php echo $this->__('Be the first to review this category') ?></a>
+            <?php endif; ?>
+        </div>
+        <div id="show_reviews" class="tab" style="display:none;">
+            <?php if(count($this->getCatreview($catId))):
+                $reviews = $this->getCatreview($catId); ?>
+                <div class="gray_text_15px"><h3><?php echo $this->__(Mage::helper('categoryreview')->displayReviewTitle()) ?></h3></div>
+                <ul id="listing">
+                <?php foreach($reviews as $val): ?>
+                    <li class="gray_text">
+                        <div class="gray_text">
+                            <strong><?php echo $val['title'];?></strong><br/><span class="by-cls"><?php echo $this->__('Review by ') ?><?php echo $val['nickname'];?></span>
+                        </div>                                                       
+                        <div class="ratings">
+                            <div class="rating-box">
+                                <div class="rating nobr" style="width: <?php echo $val['ratings']*20;?>%;"></div>
+                            </div>
+                            <div class="cls"></div>
+                        </div>
+                        <div class="gray_text"><?php echo $val['detail'];?><br/><span class="post-by"><?php echo $this->__('Posted on ').$val['created_at']; ?></span></div>
+                    </li>                   
+                <?php endforeach; ?>   
+                </ul>           
+            <?php endif; ?>
+        </div>      
+        <div id="add_reviews" class="tab" style="display:none;">    
+            <div id="reviewad">
+                <div class="gray_text_15px"><h3><?php echo $this->__(Mage::helper('categoryreview')->addReviewTitle()) ?></h3></div>
+                <div class="gray_text">
+                    <strong><?php echo $this->__("You're reviewing: "); ?>
+                        <?php echo $_helper->categoryAttribute($_category, $this->htmlEscape($_category->getName()), 'name') ?>
+                    </strong>
+                </div>
+                <form action="<?php echo $this->getUrl('categoryreview/index/catpost') ?>" method="post" id="review-form">
+                    <fieldset>
+                    <input type="hidden" name="catid" value="<?php echo $catId;?>" />
+                    <div class="product-review-box">
+                        <div class="gray_text"><strong><?php echo $this->__('How do you rate this category?'); ?></strong></div>
+                        <div class="clear1"></div>
+                        <span id="input-message-box"></span>
+                        <table class="data-table" id="product-review-table" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <th class="gray_text"><?php echo $this->__('1 star') ?></th>
+                                <th class="gray_text"><?php echo $this->__('2 stars') ?></th>
+                                <th class="gray_text"><?php echo $this->__('3 stars') ?></th>
+                                <th class="gray_text"><?php echo $this->__('4 stars') ?></th>
+                                <th class="gray_text"><?php echo $this->__('5 stars') ?></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="odd last">  
+                                <td><input type="radio" name="ratings" id="Rating_1" value="1" /></td>
+                                <td><input type="radio" name="ratings" id="Rating_2" value="2" /></td>
+                                <td><input type="radio" name="ratings" id="Rating_3" value="3" /></td>
+                                <td><input type="radio" name="ratings" id="Rating_4" value="4" /></td>
+                                <td><input type="radio" name="ratings" id="Rating_5" value="5" /></td>
+                            </tr>                 
+                            </tbody>
+                        </table>
+                        <script type="text/javascript">decorateTable('product-review-table')</script>
+                    </div>
+                    <div>
+                        <label for="nickname_field" class="gray_text"><?php echo $this->__('Nickname') ?><span class="required"></span></label><br />
+                        <input class="input-text required-entry" name="nickname" id="nickname_field" type="text" value="" />
+                    </div>
+                    <div>
+                        <label for="summary_field" class="gray_text"><?php echo $this->__('Summary of Your Review') ?><span class="required"></span></label><br />
+                        <input name="title" class="input-text  required-entry" id="summary_field" type="text" value="" />
+                    </div>
+                    <div>
+                        <label for="review_field" class="gray_text"><?php echo $this->__('Review') ?><span class="required"></span></label><br />
+                        <textarea class="required-entry" name="detail" id="review_field" cols="53" rows="3" ></textarea>
+                    </div>
+                    <div class="button-set">
+                        <input type="submit" value="Add Review" name="submit" class="button" />
+                    </div>
+                </fieldset>
+                </form>
+            </div>
+        </div>
+    <?php endif; ?> 
+    <!---- category reviews popup ---->
+    <h1><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></h1>
+</div>
+
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+
+<?php if($_imgUrl): ?>
+    <?php echo $_imgHtml ?>
+<?php endif; ?>
+
+<?php if($_description=$this->getCurrentCategory()->getDescription()): ?>
+    <div class="category-description std">
+        <?php echo $_helper->categoryAttribute($_category, $_description, 'description') ?>
+    </div>
+    <?php endif; ?>
+
+<?php if($this->isContentMode()): ?>
+    <?php echo $this->getCmsBlockHtml() ?>
+
+<?php elseif($this->isMixedMode()): ?>
+    <?php echo $this->getCmsBlockHtml() ?>
+    <?php echo $this->getProductListHtml() ?>
+
+<?php else: ?>
+    <?php echo $this->getProductListHtml() ?>
+<?php endif; ?>
+
+<script type="text/javascript">
+function show(){ document.getElementById('reviewadd').style.display = 'block'; }
+
+jQuery(document).ready(function() {
+    jQuery("#catreviews").fancybox({
+         minWidth       : 370,
+        'titleShow'     : false,
+        'padding'       : 17,
+        'transitionIn'  : 'elastic',
+        'transitionOut' : 'elastic',
+    });
+});
+//<![CDATA[
+    var dataForm = new VarienForm('review-form');
+    Validation.addAllThese(
+    [['validate-rating', 'Please select one of each of the ratings above', function(v) {
+        var trs = $('product-review-table').getElementsBySelector('tr'); var inputs; var error = 1;
+        for( var j=0; j < trs.length; j++ ){ var tr = trs[j];
+            if( j > 0 ) {
+                inputs = tr.getElementsBySelector('input');
+                for( i in inputs ) {
+                    if( inputs[i].checked == true ) { error = 0; }
+                }
+                if( error == 1 ) { return false; } else { error = 1; }
+            }
+        }
+        return true;
+    }]]);
+//]]>
+</script> 
