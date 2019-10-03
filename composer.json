@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/category_review_rating",
+    "name": "OpenMageModuleFostering\/category_review_rating",
     "type": "magento-module",
     "license": "OSL-3.0",
     "homepage": "",
     "description": "Magento category review and rating extension allows you to obtain customer reviews and display them on category page in an awesome way. ",
     "authors": [
-    {
-        "name": "PrecursorWeb Technologies",
-        "email": "magento@precursorweb.com"
-    }
-],
+        {
+            "name": "PrecursorWeb Technologies",
+            "email": "magento@precursorweb.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
